@@ -1,12 +1,14 @@
 package com.craftinginterpreters.lox;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Scanner;
 
 public class Lox {
@@ -50,22 +52,29 @@ private static void runPrompt() throws IOException {
 private static void run(String source) {
     Scanner scanner = new Scanner(source);
     List<Token> tokens = scanner.scanTokens();
+    Parser parser = new Parser(tokens);
+    Expr expression = parser.parse();
 
-    // For now, just print the tokens.
-    for (Token token : tokens) {
-      System.out.println(token);
-    }
+    // Stop if there was a syntax error.
+    if (hadError) return;
+
+    System.out.println(new AstPrinter().print(expression));
   }
-// In a full language there would be multiple ways to to present an error e.g. files, error window 
-static void error(int line, String message) {
+  static void error(int line, String message) {
     report(line, "", message);
   }
 
-  private static void report(int line, String where,
-                             String message) {
+  private static void report(int line, String where,String message) {
     System.err.println(
         "[line " + line + "] Error" + where + ": " + message);
     hadError = true;
+  }
+  static void error(Token token, String message) {
+    if (token.type == TokenType.EOF) {
+      report(token.line, " at end", message);
+    } else {
+      report(token.line, " at '" + token.lexeme + "'", message);
+    }
   }
 
 }

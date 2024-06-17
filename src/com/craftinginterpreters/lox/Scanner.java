@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.craftinginterpreters.lox.TokenType.*; 
+import static com.craftinginterpreters.lox.TokenType.*; // [static-import]
 //Scanner class responsible for tokenizing source code.
 class Scanner {
   private final String source;
@@ -41,15 +41,16 @@ class Scanner {
   }
   //We store the raw source code as a simple string, we have a list ready to fill with tokens we’re going to generate
   List<Token> scanTokens() {
-	    while (!isAtEnd()) {
-	      // We are at the beginning of the next lexeme.
-	      start = current;
-	      scanToken();
-	    }
-
-	    tokens.add(new Token(EOF, "", null, line)); // Tokens that know their location 
-	    return tokens;
+	while (!isAtEnd()) {
+		// We are at the beginning of the next lexeme.
+		start = current;
+		scanToken();
 	  }
+  
+	  tokens.add(new Token(EOF, "", null, line));
+	  return tokens;
+	}
+
   private boolean isAtEnd() {
 	    return current >= source.length();
 	  }
@@ -57,7 +58,6 @@ class Scanner {
   // Switch statement to handle different types of lexemes.
   private void scanToken() {
 	  
-	// this is a comment
 	// (( )){} // grouping stuff
 	// !*+-/=<> <= == // operators
 	   
@@ -111,7 +111,7 @@ class Scanner {
 		        } else if (isAlpha(c))	{
 		        	identifier();
 		        } else {
-		          Lox.error(line, "Unexpected character.");
+		          Lox.error(line,"Unexpected character.");
 		        }
 
 	    	  Lox.error(line , "Unexpected character");
